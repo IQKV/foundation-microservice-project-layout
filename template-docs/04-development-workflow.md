@@ -64,7 +64,7 @@ docker compose up -d                 # start local SonarQube
 
 - Add code following [Architecture Overview](03-architecture-overview.md) layer structure
 - Write tests alongside new functionality
-- Use Java 21 features: records, pattern matching, text blocks, `var`
+- Use Java 25 features: records, pattern matching, text blocks, `var`
 
 ### 3. Run Tests Locally
 
@@ -72,8 +72,6 @@ docker compose up -d                 # start local SonarQube
 # Unit + architecture tests
 ./mvnw clean test -Dcheckstyle.skip=true
 
-# Modulith verification
-./mvnw test -P modulith-test -Dcheckstyle.skip=true
 
 # Full build with JaCoCo coverage gate (90%)
 ./mvnw clean verify -Dcheckstyle.skip=true

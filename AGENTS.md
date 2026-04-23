@@ -345,7 +345,7 @@ Would you like me to use this commit message, or would you prefer to modify it?
 
 ### Code Quality Standards
 
-#### Java Code Standards (Java 21)
+#### Java Code Standards (Java 25)
 
 **Use Modern Java Features:**
 
