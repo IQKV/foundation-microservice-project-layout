@@ -2,7 +2,7 @@
 
 ## Introduction
 
-`standard-maven-single-project-layout` is a GitHub repository template for bootstrapping Spring Boot microservices under the IQKV organization. It inherits from the `com.iqkv:boot-parent-pom` BOM and enforces a consistent project structure, quality toolchain, and Git workflow out of the box.
+`foundation-microservice-project-layout` is a GitHub repository template for bootstrapping Spring Boot microservices under the IQKV organization. It inherits from the `com.iqkv:boot-parent-pom` BOM and enforces a consistent project structure, quality toolchain, and Git workflow out of the box.
 
 ## Key Features
 
