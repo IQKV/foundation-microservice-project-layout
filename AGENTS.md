@@ -180,8 +180,8 @@ Before making recommendations, agents should understand the project's technology
 
 **Runtime & Framework**
 
-- Java 21 with modern features (records, pattern matching, text blocks, var)
-- Spring Boot 3.x
+- Java 25 with modern features (records, pattern matching, text blocks, var)
+- Spring Boot 4.x
 - Maven for build management
 
 **Data & Caching**
@@ -790,10 +790,10 @@ jobs:
         steps:
             - uses: actions/checkout@v4
 
-            - name: Set up JDK 21
+            - name: Set up JDK 25
               uses: actions/setup-java@v4
               with:
-                  java-version: "21"
+                  java-version: "25"
                   distribution: "temurin"
                   cache: "maven"
 
