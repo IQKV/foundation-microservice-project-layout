@@ -23,10 +23,13 @@ logging:
 
 servicename:
   db:
-    host: ${DB_HOST:postgres}
+    host: ${DB_HOST:postgres-servicename}
+    port: ${DB_PORT:5432}
+    name: ${DB_NAME:servicename}
     username: ${DB_USERNAME:servicename}
     password: ${DB_PASSWORD:servicename}
   rabbitmq:
-    host: ${RABBITMQ_HOST:rabbitmq}
+    host: ${RABBITMQ_HOST:rabbitmq-servicename}
+    port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USERNAME:servicename}
     password: ${RABBITMQ_PASSWORD:servicename}

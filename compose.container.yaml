@@ -1,9 +1,27 @@
 services:
+  # PostgreSQL Database for Servicename
+  postgres-servicename:
+    extends:
+      file: compose.base.yaml
+      service: postgres-servicename
+
+  # RabbitMQ for Servicename
+  rabbitmq-servicename:
+    extends:
+      file: compose.base.yaml
+      service: rabbitmq-servicename
+
   # Servicename - Full platform run including build phase
   servicename:
     extends:
       file: compose.base.yaml
       service: servicename
+
+  # SonarQube for code quality analysis
+  sonar:
+    extends:
+      file: compose.base.yaml
+      service: sonar
 
 networks:
   servicename-network:
@@ -11,6 +29,10 @@ networks:
     external: false
 
 volumes:
+  postgres_servicename_data:
+    name: iqkv_servicename_postgres_data_dev
+  rabbitmq_servicename_data:
+    name: iqkv_servicename_rabbitmq_data_dev
   servicename_logs:
     name: servicename_logs_dev
   servicename_tmp:
