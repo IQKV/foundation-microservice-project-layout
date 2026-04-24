@@ -21,7 +21,7 @@ logging:
     org.mybatis: DEBUG
     liquibase: DEBUG
 
-servicename:
+iqkv:
   db:
     host: ${DB_HOST:postgres-servicename}
     port: ${DB_PORT:5432}

@@ -6,14 +6,14 @@ spring:
   application:
     name: servicename
   datasource:
-    url: jdbc:postgresql://${servicename.db.host}:${servicename.db.port}/${servicename.db.name}
-    username: ${servicename.db.username}
-    password: ${servicename.db.password}
+    url: jdbc:postgresql://${iqkv.db.host}:${iqkv.db.port}/${iqkv.db.name}
+    username: ${iqkv.db.username}
+    password: ${iqkv.db.password}
   rabbitmq:
-    host: ${servicename.rabbitmq.host}
-    port: ${servicename.rabbitmq.port}
-    username: ${servicename.rabbitmq.username}
-    password: ${servicename.rabbitmq.password}
+    host: ${iqkv.rabbitmq.host}
+    port: ${iqkv.rabbitmq.port}
+    username: ${iqkv.rabbitmq.username}
+    password: ${iqkv.rabbitmq.password}
   liquibase:
     enabled: false
   messages:
@@ -52,7 +52,7 @@ management:
         enabled: true
       show-details: when-authorized
 
-servicename:
+iqkv:
   db:
     host: ${DB_HOST:localhost}
     port: ${DB_PORT:5432}
