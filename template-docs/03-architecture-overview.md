@@ -46,9 +46,9 @@ src/main/java/com/iqkv/{servicename}/
 ## Key Components
 
 | Component             | Technology                         | Notes                               |
-| --------------------- | ---------------------------------- | ----------------------------------- |
+| --------------------- |------------------------------------| ----------------------------------- |
 | Application framework | Spring Boot 4.x                    | Via `com.iqkv:boot-parent-pom`      |
-| Persistence           | Spring Data JPA                    | Added per-service as needed         |
+| Persistence           | MyBatis                            | Added per-service as needed         |
 | Logging               | Logback + logstash-logback-encoder | Structured JSON output              |
 | Metrics               | Micrometer + Prometheus            | Scraped by `/actuator/prometheus`   |
 | Build info            | `git-commit-id-maven-plugin`       | Exposed via `/actuator/info`        |
