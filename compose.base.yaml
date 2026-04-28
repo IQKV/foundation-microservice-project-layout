@@ -73,7 +73,7 @@ services:
     container_name: servicename-dev
     environment:
       # Spring Configuration
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: local
       SPRING_APPLICATION_NAME: servicename
 
       # Database Configuration
@@ -101,6 +101,7 @@ services:
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
         -Djava.security.egd=file:/dev/./urandom
+      JAVA_TOOL_OPTIONS: "-Djava.io.tmpdir=/app/tmp -Duser.timezone=UTC"
     ports:
       - "8080:8080"
       - "8081:8081"

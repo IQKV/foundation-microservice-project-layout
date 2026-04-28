@@ -1,19 +1,13 @@
 # ===================================================================
-# Spring Boot configuration for the "dev" profile (K8s / dev cluster).
+# Spring Boot configuration for the "sit" profile (K8s / SIT namespace).
 # Overrides base: points to in-cluster service names, enables Liquibase
-# with demo data.
+# with demo data, enables debug logging.
 # ===================================================================
 
 spring:
   liquibase:
     enabled: true
     contexts: demo
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
 
 logging:
   level:
@@ -24,12 +18,8 @@ logging:
 iqkv:
   db:
     host: ${DB_HOST:postgres-servicename}
-    port: ${DB_PORT:5432}
-    name: ${DB_NAME:servicename}
-    username: ${DB_USERNAME:servicename}
-    password: ${DB_PASSWORD:servicename}
   rabbitmq:
     host: ${RABBITMQ_HOST:rabbitmq-servicename}
-    port: ${RABBITMQ_PORT:5672}
-    username: ${RABBITMQ_USERNAME:servicename}
-    password: ${RABBITMQ_PASSWORD:servicename}
+  messaging:
+    rabbitmq:
+      enabled: true

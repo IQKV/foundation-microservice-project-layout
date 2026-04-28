@@ -17,7 +17,7 @@ spring:
   liquibase:
     enabled: false
   messages:
-    basename: messages
+    basename: i18n/messages
     encoding: UTF-8
     fallback-to-system-locale: false
 
@@ -62,8 +62,12 @@ iqkv:
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
-    username: ${RABBITMQ_USERNAME:guest}
-    password: ${RABBITMQ_PASSWORD:guest}
+    username: ${RABBITMQ_USERNAME:servicename}
+    password: ${RABBITMQ_PASSWORD:servicename}
+  messaging:
+    rabbitmq:
+      # Disabled by default; enabled per-profile (local, dev, sit, uat, prd)
+      enabled: false
   liquibase:
     change-log: db/changelog/db.changelog-master.xml
 
