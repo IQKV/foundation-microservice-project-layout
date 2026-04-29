@@ -57,19 +57,25 @@ iqkv:
     host: ${DB_HOST:localhost}
     port: ${DB_PORT:5432}
     name: ${DB_NAME:servicename}
-    username: ${DB_USERNAME:servicename}
-    password: ${DB_PASSWORD:servicename}
+    username: ${DB_USERNAME:svc_servicename_dba}
+    password: ${DB_PASSWORD:svc_servicename_dba}
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
-    username: ${RABBITMQ_USERNAME:servicename}
-    password: ${RABBITMQ_PASSWORD:servicename}
+    username: ${RABBITMQ_USERNAME:svc_servicename_rmq}
+    password: ${RABBITMQ_PASSWORD:svc_servicename_rmq}
   messaging:
     rabbitmq:
-      # Disabled by default; enabled per-profile (local, dev, sit, uat, prd)
+      # Disabled by default; enabled per-profile (local, sit, uat, prd)
       enabled: false
   liquibase:
     change-log: db/changelog/db.changelog-master.xml
+  platform:
+    # Platform-wide operational mode: MULTI_TENANT (default) or SINGLE_TENANT
+    rollout-mode: ${ROLLOUT_MODE:MULTI_TENANT}
+  auth:
+    jwt:
+      public-key-path: ${JWT_PUBLIC_KEY_PATH:classpath:keys/public.pem}
 
 git:
   build_time: "@git.build.time@"

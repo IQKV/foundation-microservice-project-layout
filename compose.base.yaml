@@ -5,8 +5,8 @@ services:
     container_name: servicename-postgres-dev
     environment:
       POSTGRES_DB: servicename
-      POSTGRES_USER: servicename
-      POSTGRES_PASSWORD: servicename
+      POSTGRES_USER: svc_servicename_dba
+      POSTGRES_PASSWORD: svc_servicename_dba
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
@@ -16,7 +16,7 @@ services:
     networks:
       - servicename-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U servicename -d servicename -h localhost"]
+      test: ["CMD-SHELL", "pg_isready -U svc_servicename_dba -d servicename -h localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -44,8 +44,8 @@ services:
     image: rabbitmq:3.13-management-alpine
     container_name: servicename-rabbitmq-dev
     environment:
-      RABBITMQ_DEFAULT_USER: servicename
-      RABBITMQ_DEFAULT_PASS: servicename
+      RABBITMQ_DEFAULT_USER: svc_servicename_rmq
+      RABBITMQ_DEFAULT_PASS: svc_servicename_rmq
       RABBITMQ_DEFAULT_VHOST: /
       RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: -rabbit log_levels [{connection,error},{default,info}] disk_free_limit 2147483648
     ports:
@@ -80,14 +80,14 @@ services:
       DB_HOST: postgres-servicename
       DB_PORT: 5432
       DB_NAME: servicename
-      DB_USERNAME: servicename
-      DB_PASSWORD: servicename
+      DB_USERNAME: svc_servicename_dba
+      DB_PASSWORD: svc_servicename_dba
 
       # RabbitMQ Configuration
       RABBITMQ_HOST: rabbitmq-servicename
       RABBITMQ_PORT: 5672
-      RABBITMQ_USERNAME: servicename
-      RABBITMQ_PASSWORD: servicename
+      RABBITMQ_USERNAME: svc_servicename_rmq
+      RABBITMQ_PASSWORD: svc_servicename_rmq
 
       # Observability
       OTEL_SERVICE_NAME: servicename
@@ -103,8 +103,8 @@ services:
         -Djava.security.egd=file:/dev/./urandom
       JAVA_TOOL_OPTIONS: "-Djava.io.tmpdir=/app/tmp -Duser.timezone=UTC"
     ports:
-      - "8080:8080"
-      - "8081:8081"
+      - "8080:8080" # Servicename API
+      - "8081:8081" # Actuator / management
     depends_on:
       postgres-servicename:
         condition: service_healthy

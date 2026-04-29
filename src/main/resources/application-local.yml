@@ -2,11 +2,13 @@
 # Spring Boot configuration for the "local" profile.
 # Overrides base: enables Liquibase with demo data, relaxes actuator,
 # enables debug logging.
+# Run infrastructure with: docker compose up postgres-servicename rabbitmq-servicename
 # ===================================================================
 
 spring:
   liquibase:
     enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
     contexts: demo
 
 management:
@@ -19,6 +21,7 @@ logging:
   level:
     com.iqkv: DEBUG
     org.mybatis: DEBUG
+    liquibase: DEBUG
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
 

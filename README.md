@@ -1,83 +1,145 @@
-> ## 🤔 What is this template all about?
->
-> - This template can be used as a base layer for a single-module Maven project.
-> - Make the project easy to maintain with **7 issue templates**.
-> - Quick-start documentation
-> - Manage issues with **20 issue labels**.
-> - Make _community healthier_ with all the guides like code of conduct, contributing, support, security...
-> - Learn more with the [official GitHub guide on creating repositories from a template](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template).
-> - To start using it, click **[Use this template](https://github.com/IQKV/foundation-microservice-project-layout/generate)** to create your new repository.
+# Foundation Microservice Project Layout 🚀
 
----
+GitHub template for bootstrapping Spring Boot microservices on the IQ Key Value platform. Provides a standardized single-module Maven layout with Docker Compose, multi-profile Spring configuration, and all quality tooling pre-wired.
 
-# Spring Boot Application Template
+## About
 
-A GitHub template for quickly bootstrapping Spring Boot applications with best practices.
+This template gives you a production-ready starting point:
 
-## Overview
+- **Maven single-module layout** — standard `src/main/java` structure with MyBatis, PostgreSQL, Liquibase, and RabbitMQ wired up
+- **Multi-profile Spring config** — `local`, `sit`, `uat`, `prd` profiles with correct defaults per environment
+- **Docker Compose** — `compose.base.yaml` with PostgreSQL, RabbitMQ, SonarQube, Prometheus, and Grafana; `compose.container.yaml` for minimal runtime stack
+- **Dockerfile** — multi-stage build with layered JAR extraction, non-root `appuser`, and JVM tuning
+- **Security** — Spring Security + OAuth2 Resource Server (RS256 JWT) pre-configured
+- **Observability** — Micrometer + Prometheus + structured JSON logging (Logstash encoder)
+- **Quality tools** — Checkstyle, JaCoCo, ArchUnit, Husky git hooks, commitlint
 
-This template provides a standardized foundation for developing Java applications using Spring Boot with Maven's single-module layout. For detailed documentation, please refer to
-the [template-docs](./template-docs) directory.
+## Template Usage
 
-## Template Customization
-
-To use this template for your own project:
-
-1. Click the **[Use this template](https://github.com/IQKV/foundation-microservice-project-layout/generate)** button at the top of the repository
-2. Name your repository and provide a description
-3. Choose the repository visibility (public or private)
-4. Click **Create repository from template**
-
-After creating your repository:
-
-1. Update the project name and description in `pom.xml`
-2. Modify the package names in `src/main/java` and `src/test/java`
-3. Update this README.md with your project-specific information
-4. Review and adjust GitHub workflows in `.github/workflows` as needed
-5. Customize environment variables in `compose.yaml` for your application
+1. Click **[Use this template](https://github.com/IQKV/foundation-microservice-project-layout/generate)** to create your repository
+2. Replace all `servicename` / `Servicename` occurrences with your service name
+3. Update `pom.xml` — `artifactId`, `name`, `description`, `start-class`
+4. Rename the Java package from `com.iqkv.foundation.servicename` to your package
+5. Remove unused dependencies from `pom.xml` (e.g. `shedlock` if no scheduled jobs needed)
+6. Update this `README.md` — see `README.template.md` for the target structure
 
 ## Quick Links
 
-- [Project Overview](./template-docs/01-project-overview.md)
-- [Getting Started Guide](./template-docs/02-getting-started.md)
-- [Architecture Overview](./template-docs/03-architecture-overview.md)
-- [Development Workflow](./template-docs/04-development-workflow.md)
-- [Testing Guide](./template-docs/05-testing-guide.md)
+- [API Documentation](./docs/api/README.md)
+- [Architecture Overview](./docs/architecture/README.md)
+- [Deployment Guide](./docs/deployment/README.md)
+- [Template Docs](./template-docs/)
+- [Contributing Guidelines](.github/CONTRIBUTING.md)
 
-## Key Features
+## Tech Stack
 
-- **Project Structure**: Standard Maven single-module layout
-- **GitHub Integration**: Issue templates, labels, and workflows
-- **Quality Tools**: Code formatting, linting, and testing setup
-- **Documentation**: Community guidelines and contribution process
+- Java 25 / Spring Boot (latest via parent POM)
+- MyBatis 3.x (no JPA) + PostgreSQL 17
+- Liquibase for schema migrations
+- RabbitMQ for async messaging
+- Spring Security + OAuth2 Resource Server (RS256 JWT)
+- ShedLock for distributed scheduled jobs
+- Micrometer + Prometheus
+- springdoc-openapi (Swagger UI)
 
 ## Prerequisites
 
-- Java 25 (OpenJDK)
-- Maven
-- Node.js & pnpm
+- JDK 25 (Eclipse Temurin)
+- Maven 3.9+
+- Node.js >= 22.15.0 & pnpm >= 10.33.0 (git hooks)
 - Docker & Docker Compose
 
 ## Quick Start
 
 ```bash
-# Clone the repository
+# Clone / use template
 git clone https://github.com/IQKV/foundation-microservice-project-layout.git my-service
-
-# Navigate to project directory
 cd my-service
 
 # Install git hooks
 pnpm install
 
-# Start local dev services
+# Copy environment variables
+cp .env.example .env.local
+# Edit .env.local — defaults work for local Docker setup
+
+# Start dependencies (PostgreSQL, RabbitMQ)
 docker compose up -d
 
-# Run the application
-mvn spring-boot:run -Dspring-boot.run.profiles=local -P local
+# Run the service
+./mvnw spring-boot:run -Pdev
+# → API:      http://localhost:8080
+# → Actuator: http://localhost:8081/actuator/health
+# → Swagger:  http://localhost:8080/swagger-ui.html
 ```
 
-For more detailed instructions, configuration options, and development guidelines, please refer to the [documentation](./template-docs/).
+## Environment Variables
+
+| Variable            | Default              | Description              |
+| ------------------- | -------------------- | ------------------------ |
+| `DB_HOST`           | `localhost`          | PostgreSQL host          |
+| `DB_PORT`           | `5432`               | PostgreSQL port          |
+| `DB_NAME`           | `servicename`        | Database name            |
+| `DB_USERNAME`       | `svc_servicename_dba`| Database user            |
+| `DB_PASSWORD`       | `svc_servicename_dba`| Database password        |
+| `RABBITMQ_HOST`     | `localhost`          | RabbitMQ host            |
+| `RABBITMQ_PORT`     | `5672`               | RabbitMQ AMQP port       |
+| `RABBITMQ_USERNAME` | `svc_servicename_rmq`| RabbitMQ user            |
+| `RABBITMQ_PASSWORD` | `svc_servicename_rmq`| RabbitMQ password        |
+| `ROLLOUT_MODE`      | `MULTI_TENANT`       | Platform rollout mode    |
+
+> Copy `.env.example` to `.env.local` / `.env.uat` / `.env.prd` and fill in values per environment.
+
+## Maven Commands
+
+```bash
+# Build and test (skip Checkstyle during development)
+./mvnw clean verify -Dcheckstyle.skip=true
+
+# Run tests only
+./mvnw test -Dcheckstyle.skip=true
+
+# Explicit Checkstyle check
+./mvnw checkstyle:check
+
+# Coverage report → target/site/jacoco/index.html
+./mvnw jacoco:report
+
+# Production build
+./mvnw clean package -Pproduction
+```
+
+## Docker
+
+```bash
+# Build image
+docker build -t iqkv/servicename:latest .
+
+# Run full stack (service + dependencies)
+docker compose -f compose.container.yaml up -d
+```
+
+## Monitoring
+
+| Endpoint                   | Description                 |
+| -------------------------- | --------------------------- |
+| `GET /actuator/health`     | Liveness + readiness probes |
+| `GET /actuator/metrics`    | Application metrics         |
+| `GET /actuator/prometheus` | Prometheus scrape endpoint  |
+| `GET /swagger-ui.html`     | API documentation           |
+
+## Project Structure
+
+```
+src/main/java/com/iqkv/foundation/servicename/
+├── {domain}/           # Feature module (vertical slice)
+│   ├── {Entity}.java
+│   ├── {Entity}Service.java
+│   ├── {Entity}RestResource.java
+│   └── dto/
+├── infrastructure/     # Spring config, security, MyBatis, RabbitMQ setup
+└── shared/             # Common exceptions, utilities, value objects
+```
 
 ## License
 
@@ -86,3 +148,18 @@ This project is licensed under the Apache License. See the [LICENSE](LICENSE) fi
 ## Contributing
 
 Please read our [Contributing Guidelines](.github/CONTRIBUTING.md) and [Code of Conduct](.github/CODE_OF_CONDUCT.md).
+
+---
+
+## 🧩 Boilerplate Architecture
+
+- **Persistence**: MyBatis with XML mappers + PostgreSQL; Liquibase manages schema migrations; `demo` context for seed data in local/sit/uat
+- **Messaging**: RabbitMQ consumer/publisher; `iqkv.messaging.rabbitmq.enabled` toggle — disabled in base, enabled per profile
+- **Security**: Spring Security + OAuth2 Resource Server; RS256 JWT validated via public key; `@PreAuthorize` on every endpoint
+- **Multi-tenancy**: `ROLLOUT_MODE` (`MULTI_TENANT` | `SINGLE_TENANT`) — must be identical across all platform services
+- **Credential convention**: DB users follow `svc_{service}_dba`, RabbitMQ users follow `svc_{service}_rmq`
+- **Observability**: Micrometer + Prometheus; structured JSON logging with Logstash encoder; health probes for Kubernetes
+- **GitHub Integration**: Issue templates, labels, Dependabot, and CI workflows
+- **Quality Tools**: Checkstyle, JaCoCo (60% gate), ArchUnit, commit convention enforcement
+
+> See [AGENTS.md](AGENTS.md) for repository structure, DDD patterns, and agent guidelines.

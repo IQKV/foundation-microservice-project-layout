@@ -1,13 +1,16 @@
 # ===================================================================
 # Spring Boot configuration for the "prd" profile.
 # Overrides base: all secrets via env vars (no defaults), hardens
-# actuator/swagger.
+# actuator/swagger, disables suffix pattern matching.
 # ===================================================================
 
 spring:
   liquibase:
     enabled: true
     contexts: "!demo"
+  mvc:
+    pathmatch:
+      use-suffix-pattern: false
 
 springdoc:
   api-docs:
