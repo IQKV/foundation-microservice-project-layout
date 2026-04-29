@@ -75,18 +75,18 @@ docker compose up -d
 
 ## Environment Variables
 
-| Variable            | Default              | Description              |
-| ------------------- | -------------------- | ------------------------ |
-| `DB_HOST`           | `localhost`          | PostgreSQL host          |
-| `DB_PORT`           | `5432`               | PostgreSQL port          |
-| `DB_NAME`           | `servicename`        | Database name            |
-| `DB_USERNAME`       | `svc_servicename_dba`| Database user            |
-| `DB_PASSWORD`       | `svc_servicename_dba`| Database password        |
-| `RABBITMQ_HOST`     | `localhost`          | RabbitMQ host            |
-| `RABBITMQ_PORT`     | `5672`               | RabbitMQ AMQP port       |
-| `RABBITMQ_USERNAME` | `svc_servicename_rmq`| RabbitMQ user            |
-| `RABBITMQ_PASSWORD` | `svc_servicename_rmq`| RabbitMQ password        |
-| `ROLLOUT_MODE`      | `MULTI_TENANT`       | Platform rollout mode    |
+| Variable            | Default               | Description           |
+| ------------------- | --------------------- | --------------------- |
+| `DB_HOST`           | `localhost`           | PostgreSQL host       |
+| `DB_PORT`           | `5432`                | PostgreSQL port       |
+| `DB_NAME`           | `servicename`         | Database name         |
+| `DB_USERNAME`       | `svc_servicename_dba` | Database user         |
+| `DB_PASSWORD`       | `svc_servicename_dba` | Database password     |
+| `RABBITMQ_HOST`     | `localhost`           | RabbitMQ host         |
+| `RABBITMQ_PORT`     | `5672`                | RabbitMQ AMQP port    |
+| `RABBITMQ_USERNAME` | `svc_servicename_rmq` | RabbitMQ user         |
+| `RABBITMQ_PASSWORD` | `svc_servicename_rmq` | RabbitMQ password     |
+| `ROLLOUT_MODE`      | `MULTI_TENANT`        | Platform rollout mode |
 
 > Copy `.env.example` to `.env.local` / `.env.uat` / `.env.prd` and fill in values per environment.
 
