@@ -4,7 +4,7 @@
 
 spring:
   application:
-    name: servicename
+    name: foundation-servicename-service
   datasource:
     url: jdbc:postgresql://${iqkv.db.host}:${iqkv.db.port}/${iqkv.db.name}
     username: ${iqkv.db.username}
