@@ -25,7 +25,7 @@ spring:
 logging:
   level:
     com.iqkv: DEBUG
-    liquibase: DEBUG
+    liquibase: INFO
 
 git:
   build_time: "@git.build.time@"
