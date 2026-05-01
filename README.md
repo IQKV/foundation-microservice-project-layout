@@ -28,7 +28,6 @@ This template gives you a production-ready starting point:
 - [API Documentation](./docs/api/README.md)
 - [Architecture Overview](./docs/architecture/README.md)
 - [Deployment Guide](./docs/deployment/README.md)
-- [Template Docs](./template-docs/)
 - [Contributing Guidelines](.github/CONTRIBUTING.md)
 
 ## Tech Stack
