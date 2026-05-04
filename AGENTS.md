@@ -725,7 +725,7 @@ void shouldRejectInvalidToken() {
 @Test
 @WithMockUser(roles = "USER")
 void shouldDenyAccessToAdminEndpoint() throws Exception {
-  mockMvc.perform(get("/api/v1/admin/users")).andExpect(status().isForbidden());
+  mockMvc.perform(get("/api/v1/iam/operator/users")).andExpect(status().isForbidden());
 }
 ```
 
