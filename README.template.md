@@ -58,8 +58,11 @@ Add a detailed introduction about the project here, everything you want the read
 ## 🧩 Boilerplate Architecture
 
 - **Project Structure**: Tactical DDD with bounded contexts, hexagonal architecture (domain/application/adapter layers)
-- **GitHub Integration**: Issue templates, labels, and workflows
-- **Quality Tools**: Code formatting, linting, and testing setup
-- **Documentation**: Community guidelines and contribution process
+- **Persistence**: MyBatis 3.x + PostgreSQL 17 + Liquibase for schema migrations
+- **Messaging**: RabbitMQ consumer/publisher pattern
+- **Security**: Spring Security + OAuth2 Resource Server (RS256 JWT)
+- **Infrastructure**: Multi-stage Docker builds, tiered Docker Compose setup
+- **Observability**: Micrometer, Prometheus, Grafana, and structured JSON logging
+- **Quality Tools**: Checkstyle, JaCoCo, ArchUnit, and conventional commits
 
 > See [AGENTS.md](AGENTS.md) for detailed project structure and DDD patterns.

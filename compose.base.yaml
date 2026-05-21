@@ -2,7 +2,7 @@ services:
   # PostgreSQL Database for Servicename - Local Development
   postgres-servicename:
     image: postgres:17-alpine
-    container_name: servicename-postgres-dev
+    container_name: foundation-servicename-postgres-dev
     environment:
       POSTGRES_DB: servicename
       POSTGRES_USER: svc_servicename_dba
@@ -13,6 +13,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_servicename_data:/var/lib/postgresql/data
+      - ./docker/postgres/init-servicename.sql:/docker-entrypoint-initdb.d/init-servicename.sql:ro
     networks:
       - servicename-network
     healthcheck:
@@ -42,7 +43,7 @@ services:
   # RabbitMQ for Servicename - Local Development
   rabbitmq-servicename:
     image: rabbitmq:3.13-management-alpine
-    container_name: servicename-rabbitmq-dev
+    container_name: foundation-servicename-rabbitmq-dev
     environment:
       RABBITMQ_DEFAULT_USER: svc_servicename_rmq
       RABBITMQ_DEFAULT_PASS: svc_servicename_rmq
@@ -63,6 +64,17 @@ services:
       start_period: 60s
     restart: unless-stopped
 
+  # MailHog for local email testing
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: foundation-servicename-mailhog-dev
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+    networks:
+      - servicename-network
+    restart: unless-stopped
+
   # Servicename - Local Development
   servicename:
     build:
@@ -70,7 +82,7 @@ services:
       dockerfile: ./Dockerfile
       target: builder
     image: iqkv/servicename:dev
-    container_name: servicename-dev
+    container_name: foundation-servicename-dev
     environment:
       # Spring Configuration
       SPRING_PROFILES_ACTIVE: local
@@ -89,6 +101,14 @@ services:
       RABBITMQ_USERNAME: svc_servicename_rmq
       RABBITMQ_PASSWORD: svc_servicename_rmq
 
+      # Mail Configuration (MailHog)
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_FROM: noreply@iqkv.dev
+      MAIL_REPLY_TO: ""
+
       # Observability
       OTEL_SERVICE_NAME: servicename
       OTEL_RESOURCE_ATTRIBUTES: service.name=servicename,service.version=1.0.0,deployment.environment=dev
@@ -101,7 +121,6 @@ services:
         -XX:+UseContainerSupport
         -XX:MaxRAMPercentage=75.0
         -Djava.security.egd=file:/dev/./urandom
-      JAVA_TOOL_OPTIONS: "-Djava.io.tmpdir=/app/tmp -Duser.timezone=UTC"
     ports:
       - "8080:8080" # Servicename API
       - "8081:8081" # Actuator / management
@@ -134,7 +153,7 @@ services:
   # SonarQube for code quality analysis
   sonar:
     image: sonarqube:25.3.0.104237-community
-    container_name: servicename-sonarqube-dev
+    container_name: foundation-servicename-sonarqube-dev
     environment:
       - SONAR_FORCEAUTHENTICATION=false
     ports:
@@ -147,7 +166,7 @@ services:
   # Prometheus for metrics collection
   prometheus:
     image: prom/prometheus:latest
-    container_name: servicename-prometheus-dev
+    container_name: foundation-servicename-prometheus-dev
     volumes:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
@@ -159,7 +178,7 @@ services:
   # Grafana for metrics visualization
   grafana:
     image: grafana/grafana:latest
-    container_name: servicename-grafana-dev
+    container_name: foundation-servicename-grafana-dev
     volumes:
       - ./docker/grafana/provisioning:/etc/grafana/provisioning
     environment:
@@ -175,7 +194,7 @@ services:
 networks:
   servicename-network:
     driver: bridge
-    name: servicename-network-dev
+    name: foundation-servicename-network-dev
     ipam:
       config:
         - subnet: 172.20.0.0/16

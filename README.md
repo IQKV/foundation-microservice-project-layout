@@ -8,8 +8,9 @@ This template gives you a production-ready starting point:
 
 - **Maven single-module layout** — standard `src/main/java` structure with MyBatis, PostgreSQL, Liquibase, and RabbitMQ wired up
 - **Multi-profile Spring config** — `local`, `sit`, `uat`, `prd` profiles with correct defaults per environment
-- **Docker Compose** — `compose.base.yaml` with PostgreSQL, RabbitMQ, SonarQube, Prometheus, and Grafana; `compose.container.yaml` for minimal runtime stack
+- **Docker Compose** — `compose.base.yaml` with PostgreSQL, RabbitMQ, MailHog, SonarQube, Prometheus, and Grafana; `compose.container.yaml` for full runtime stack including the service container
 - **Dockerfile** — multi-stage build with layered JAR extraction, non-root `appuser`, and JVM tuning
+- **Database Initialization** — `docker/postgres/init-servicename.sql` for automated schema and extension setup
 - **Security** — Spring Security + OAuth2 Resource Server (RS256 JWT) pre-configured
 - **Observability** — Micrometer + Prometheus + structured JSON logging (Logstash encoder)
 - **Quality tools** — Checkstyle, JaCoCo, ArchUnit, Husky git hooks, commitlint
@@ -62,7 +63,7 @@ pnpm install
 cp .env.example .env.local
 # Edit .env.local — defaults work for local Docker setup
 
-# Start dependencies (PostgreSQL, RabbitMQ)
+# Start dependencies (PostgreSQL, RabbitMQ, MailHog, etc.)
 docker compose up -d
 
 # Run the service
@@ -70,6 +71,7 @@ docker compose up -d
 # → API:      http://localhost:8080
 # → Actuator: http://localhost:8081/actuator/health
 # → Swagger:  http://localhost:8080/swagger-ui.html
+# → MailHog:  http://localhost:8025
 ```
 
 ## Environment Variables
@@ -85,6 +87,9 @@ docker compose up -d
 | `RABBITMQ_PORT`     | `5672`                | RabbitMQ AMQP port    |
 | `RABBITMQ_USERNAME` | `svc_servicename_rmq` | RabbitMQ user         |
 | `RABBITMQ_PASSWORD` | `svc_servicename_rmq` | RabbitMQ password     |
+| `MAIL_HOST`         | `localhost`           | SMTP host (MailHog)   |
+| `MAIL_PORT`         | `1025`                | SMTP port             |
+| `MAIL_FROM`         | `noreply@iqkv.dev`    | Default sender email  |
 | `ROLLOUT_MODE`      | `MULTI_TENANT`        | Platform rollout mode |
 
 > Copy `.env.example` to `.env.local` / `.env.uat` / `.env.prd` and fill in values per environment.
@@ -126,18 +131,24 @@ docker compose -f compose.container.yaml up -d
 | `GET /actuator/metrics`    | Application metrics         |
 | `GET /actuator/prometheus` | Prometheus scrape endpoint  |
 | `GET /swagger-ui.html`     | API documentation           |
+| `GET /` (on port 8025)     | MailHog Web UI              |
 
 ## Project Structure
 
 ```
-src/main/java/com/iqkv/foundation/servicename/
-├── {domain}/           # Feature module (vertical slice)
-│   ├── {Entity}.java
-│   ├── {Entity}Service.java
-│   ├── {Entity}RestResource.java
-│   └── dto/
-├── infrastructure/     # Spring config, security, MyBatis, RabbitMQ setup
-└── shared/             # Common exceptions, utilities, value objects
+.
+├── docker/
+│   ├── postgres/       # DB initialization scripts
+│   ├── prometheus/     # Prometheus configuration
+│   └── grafana/        # Grafana dashboards and datasources
+├── src/main/java/com/iqkv/foundation/servicename/
+│   ├── {domain}/       # Feature module (vertical slice)
+│   │   ├── {Entity}.java
+│   │   ├── {Entity}Service.java
+│   │   ├── {Entity}RestResource.java
+│   │   └── dto/
+│   ├── infrastructure/ # Spring config, security, MyBatis, RabbitMQ setup
+│   └── shared/         # Common exceptions, utilities, value objects
 ```
 
 ## License

@@ -11,6 +11,12 @@ services:
       file: compose.base.yaml
       service: rabbitmq-servicename
 
+  # MailHog for local email testing
+  mailhog:
+    extends:
+      file: compose.base.yaml
+      service: mailhog
+
   # Servicename - Full platform run including build phase
   servicename:
     extends:
@@ -19,7 +25,7 @@ services:
 
 networks:
   servicename-network:
-    name: servicename-network-dev
+    name: foundation-servicename-network-dev
     external: false
 
 volumes:
