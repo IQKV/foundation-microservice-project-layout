@@ -17,6 +17,12 @@ services:
       file: compose.base.yaml
       service: mailhog
 
+  # DbGate - Database Administration Tool
+  dbgate:
+    extends:
+      file: compose.base.yaml
+      service: dbgate
+
   # SonarQube for code quality analysis
   sonar:
     extends:
@@ -45,6 +51,8 @@ volumes:
     name: iqkv_servicename_postgres_data_dev
   rabbitmq_servicename_data:
     name: iqkv_servicename_rabbitmq_data_dev
+  dbgate_servicename_data:
+    name: iqkv_servicename_dbgate_data_dev
   servicename_logs:
     name: servicename_logs_dev
   servicename_tmp:
