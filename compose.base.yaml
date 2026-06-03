@@ -113,7 +113,6 @@ services:
     environment:
       # Spring Configuration
       SPRING_PROFILES_ACTIVE: local
-      SPRING_APPLICATION_NAME: servicename
 
       # Database Configuration
       DB_HOST: postgres-servicename
