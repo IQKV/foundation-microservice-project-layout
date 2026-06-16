@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -63,15 +62,12 @@ public class PlanCatalogCache {
 
   private final RestTemplate restTemplate;
   private final String billingServiceUrl;
-  private final String serviceToken;
 
   public PlanCatalogCache(
       final RestTemplate planCatalogRestTemplate,
-      @Value("${iqkv.billing.service-url:http://foundation-billing-service:8080}") final String billingServiceUrl,
-      @Value("${iqkv.billing.service-token:}") final String serviceToken) {
+      @Value("${iqkv.billing.service-url:http://foundation-billing-service}") final String billingServiceUrl) {
     this.restTemplate = planCatalogRestTemplate;
     this.billingServiceUrl = billingServiceUrl;
-    this.serviceToken = serviceToken;
   }
 
   @PostConstruct
@@ -86,14 +82,10 @@ public class PlanCatalogCache {
   @Scheduled(fixedDelayString = "${iqkv.billing.plan-catalog-refresh-interval:PT10M}")
   public void refresh() {
     try {
-      final HttpHeaders headers = new HttpHeaders();
-      if (serviceToken != null && !serviceToken.isBlank()) {
-        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + serviceToken);
-      }
       final ResponseEntity<PlanCatalogEntry[]> response = restTemplate.exchange(
           billingServiceUrl + INTERNAL_PLANS_PATH,
           HttpMethod.GET,
-          new HttpEntity<>(headers),
+          HttpEntity.EMPTY,
           PlanCatalogEntry[].class
       );
       final PlanCatalogEntry[] entries = response.getBody();
