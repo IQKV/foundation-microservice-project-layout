@@ -16,32 +16,66 @@
 
 package com.iqkv.foundation.servicename.plan;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * Local copy of the plan feature set as returned by the billing service internal plans endpoint.
  *
  * <p>Intentionally a plain record — no shared library dependency on billing service.
  * Only the fields this service cares about are mapped; unknown JSON fields are ignored.
  *
- * <p>Add fields here as this service gains plan-gated features.
+ * <h3>Design — middle path</h3>
+ * <ul>
+ *   <li><b>Typed quota fields</b> ({@code maxUsers}, {@code maxProjects}) — kept as named
+ *       {@code int} fields for compile-time safety. Enforce these at write time.</li>
+ *   <li><b>Open feature map</b> ({@link #features}) — extensible
+ *       {@code Map<String, PlanFeature>} keyed by feature code. O(1) lookup,
+ *       no duplicate codes, insertion order preserved. Adding a new feature requires
+ *       only a YAML change in the billing service — no recompilation here.</li>
+ * </ul>
+ *
+ * <p>Add typed fields only for quotas this service actually enforces at write time.
+ * Everything else belongs in the {@code features} map.
+ *
+ * <p>{@code maxUsers} and {@code maxProjects} use {@code 0} to mean "unlimited".
+ *
+ * <p>Usage example — quota enforcement and feature check at write time:
+ * <pre>
+ *   final PlanFeatures f = planCatalogCache.forPlan(request.getHeader("X-Plan-Code"));
+ *   if (f.maxProjects() > 0 &amp;&amp; current &gt;= f.maxProjects()) {
+ *       throw new PlanQuotaExceededException(...);
+ *   }
+ *   if (f.has("custom_domain")) { ... }
+ * </pre>
  */
 public record PlanFeatures(
-    boolean prioritySupport,
     int maxUsers,
-    int maxProjects
+    int maxProjects,
+    Map<String, PlanFeature> features
 ) {
 
   /** Safe fallback when the plan code is unknown or the cache is empty. */
-  public static final PlanFeatures NONE = new PlanFeatures(false, 1, 1);
+  public static final PlanFeatures NONE = new PlanFeatures(1, 1, Collections.emptyMap());
+
+  public PlanFeatures {
+    features = features != null ? Collections.unmodifiableMap(features) : Collections.emptyMap();
+  }
 
   /**
-   * Returns {@code true} if this plan includes the named boolean feature.
+   * Returns {@code true} if the feature map contains an entry for the given code
+   * whose value is {@code "true"} (case-insensitive). O(1) lookup.
    *
-   * @param feature the feature key (e.g. {@code "priority_support"})
+   * <p>Use this for display-only boolean features. For quota enforcement use the
+   * typed fields {@link #maxUsers()} and {@link #maxProjects()} directly.
+   *
+   * @param code the feature code (e.g. {@code "priority_support"})
    */
-  public boolean has(final String feature) {
-    return switch (feature) {
-      case "priority_support" -> prioritySupport;
-      default -> false;
-    };
+  public boolean has(final String code) {
+    if (code == null || code.isBlank()) {
+      return false;
+    }
+    final PlanFeature feature = features.get(code);
+    return feature != null && "true".equalsIgnoreCase(feature.value());
   }
 }
