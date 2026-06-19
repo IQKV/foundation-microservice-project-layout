@@ -9,14 +9,14 @@
     <property name="LOG_LEVEL_MESSAGING" value="${LOG_LEVEL_MESSAGING:-WARN}"/>
     <property name="SERVICE_NAME" value="${spring.application.name:-foundation-servicename-service}"/>
     <property name="ENVIRONMENT" value="${SPRING_PROFILES_ACTIVE:-unknown}"/>
-    
+
     <!-- Console Appender - Text Format (default) -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId:-}] [%X{traceId:-}] [%X{spanId:-}] [%X{tenantId:-}] %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    
+
     <!-- Console Appender - JSON Format -->
     <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
@@ -40,7 +40,7 @@
             </providers>
         </encoder>
     </appender>
-    
+
     <!-- Async wrapper for JSON appender -->
     <appender name="ASYNC_CONSOLE_JSON" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="CONSOLE_JSON"/>
@@ -48,7 +48,7 @@
         <discardingThreshold>0</discardingThreshold>
         <includeCallerData>false</includeCallerData>
     </appender>
-    
+
     <!-- Application Loggers - controlled by environment variables -->
     <logger name="com.iqkv" level="${LOG_LEVEL_APP}"/>
     <logger name="org.springframework.security" level="${LOG_LEVEL_SECURITY}"/>
@@ -57,12 +57,12 @@
     <logger name="org.springframework.rabbit" level="${LOG_LEVEL_MESSAGING}"/>
     <logger name="org.mybatis" level="${LOG_LEVEL_SQL}"/>
     <logger name="liquibase" level="INFO"/>
-    
+
     <!-- Default: Text format for local/dev -->
     <root level="${LOG_LEVEL_ROOT}">
         <appender-ref ref="CONSOLE"/>
     </root>
-    
+
     <!-- Override for uat/prd: Use JSON format -->
     <springProfile name="uat,prd">
         <root level="${LOG_LEVEL_ROOT}">

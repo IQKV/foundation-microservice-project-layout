@@ -21,6 +21,7 @@ import jakarta.validation.ConstraintViolationException;
 import java.net.URI;
 import java.util.UUID;
 
+import com.iqkv.foundation.servicename.shared.exception.PlanFeatureNotAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -93,6 +94,16 @@ public class GlobalExceptionHandler {
     log.warn("Access denied: {}", ex.getMessage());
     final ProblemDetail pd = problem("about:blank", "Forbidden", 403,
         ex.getMessage(), request);
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(pd);
+  }
+
+  @ExceptionHandler(PlanFeatureNotAvailableException.class)
+  public ResponseEntity<ProblemDetail> handlePlanFeatureNotAvailable(final PlanFeatureNotAvailableException ex,
+                                                                     final HttpServletRequest request) {
+    log.warn("Plan feature not available: featureCode={}, planMessage={}", ex.getFeatureCode(), ex.getMessage());
+    final ProblemDetail pd = problem("about:blank", "Plan upgrade required", 403,
+        ex.getMessage(), request);
+    pd.setProperty("featureCode", ex.getFeatureCode());
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(pd);
   }
 

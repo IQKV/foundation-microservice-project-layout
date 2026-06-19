@@ -54,7 +54,9 @@ public class PlanCatalogCache {
   private static final Logger log = LoggerFactory.getLogger(PlanCatalogCache.class);
   private static final String INTERNAL_PLANS_PATH = "/api/v1/billing/internal/plans";
 
-  /** Local DTO for deserializing the billing internal plans response. */
+  /**
+   * Local DTO for deserializing the billing internal plans response.
+   */
   record PlanCatalogEntry(String planCode, PlanFeatures features) {
   }
 
