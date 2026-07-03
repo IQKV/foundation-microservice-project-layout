@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.iqkv</groupId>
         <artifactId>boot-parent-pom</artifactId>
-        <version>0.24.16</version>
+        <version>0.24.17</version>
     </parent>
     <groupId>com.iqkv</groupId>
     <artifactId>foundation-servicename-service</artifactId>
@@ -27,11 +27,6 @@
     </properties>
 
     <dependencies>
-        <!-- Billing plan entitlement -->
-        <dependency>
-            <groupId>com.iqkv</groupId>
-            <artifactId>foundation-entitlement-plan-resolver-mvc</artifactId>
-        </dependency>
         <!-- Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -95,6 +90,24 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.iqkv</groupId>
+            <artifactId>foundation-tenancy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.iqkv</groupId>
+            <artifactId>foundation-audit-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.iqkv</groupId>
+            <artifactId>foundation-audit-spi</artifactId>
+        </dependency>
+        <!-- Billing plan entitlement -->
+        <dependency>
+            <groupId>com.iqkv</groupId>
+            <artifactId>foundation-entitlement-plan-resolver-mvc</artifactId>
         </dependency>
 
         <!-- Testing -->
