@@ -16,7 +16,7 @@ spring:
     password: ${iqkv.rabbitmq.password}
   liquibase:
     enabled: false
-    change-log: classpath:db/changelog/db.changelog-master.xml
+    change-log: classpath:db/changelog/system/db.changelog-system.xml
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration
   messages:
@@ -78,7 +78,10 @@ iqkv:
     # How often the plan catalog cache is refreshed (ISO-8601 duration)
     plan-catalog-refresh-interval: ${PLAN_CATALOG_REFRESH_INTERVAL:PT10M}
   liquibase:
-    change-log: db/changelog/db.changelog-master.xml
+    system-change-log: db/changelog/system/db.changelog-system.xml
+    tenant-change-log: db/changelog/tenant/db.changelog-tenant.xml
+    demo-tenants: []
+    change-log: db/changelog/system/db.changelog-system.xml
   platform:
     # Platform-wide operational mode: MULTI_TENANT (default) or SINGLE_TENANT
     rollout-mode: ${ROLLOUT_MODE:MULTI_TENANT}
