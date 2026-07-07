@@ -15,7 +15,7 @@ services:
       - postgres_servicename_data:/var/lib/postgresql/data
       - ./docker/postgres/init-servicename.sql:/docker-entrypoint-initdb.d/init-servicename.sql:ro
     networks:
-      - servicename-network
+      - servicename-service-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U svc_servicename_dba -d servicename -h localhost"]
       interval: 10s
@@ -55,7 +55,7 @@ services:
     volumes:
       - rabbitmq_servicename_data:/var/lib/rabbitmq
     networks:
-      - servicename-network
+      - servicename-service-network
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 30s
@@ -66,13 +66,13 @@ services:
 
   # MailHog for local email testing
   mailhog:
-    image: mailhog/mailhog:latest
+    image: mailhog/mailhog:v1.0.1
     container_name: foundation-servicename-mailhog-dev
     ports:
       - "1025:1025" # SMTP
       - "8025:8025" # Web UI
     networks:
-      - servicename-network
+      - servicename-service-network
     restart: unless-stopped
 
   # DbGate - Database Administration Tool
@@ -88,7 +88,7 @@ services:
       - ./docker/dbgate/connections.jsonl:/root/.dbgate/connections.jsonl:ro
       - dbgate_servicename_data:/root/.dbgate
     networks:
-      - servicename-network
+      - servicename-service-network
     depends_on:
       postgres-servicename:
         condition: service_healthy
@@ -103,16 +103,17 @@ services:
     restart: unless-stopped
 
   # Servicename - Local Development
-  servicename:
+  servicename-service:
     build:
       context: .
       dockerfile: ./Dockerfile
       target: builder
-    image: iqkv/servicename:dev
-    container_name: foundation-servicename-dev
+    image: iqkv/foundation-servicename-service:local
+    container_name: foundation-servicename-service-dev
     environment:
       # Spring Configuration
       SPRING_PROFILES_ACTIVE: local
+      SPRING_APPLICATION_NAME: foundation-servicename-service
 
       # Database Configuration
       DB_HOST: postgres-servicename
@@ -136,8 +137,8 @@ services:
       MAIL_REPLY_TO: ""
 
       # Observability
-      OTEL_SERVICE_NAME: servicename
-      OTEL_RESOURCE_ATTRIBUTES: service.name=servicename,service.version=1.0.0,deployment.environment=dev
+      OTEL_SERVICE_NAME: foundation-servicename-service
+      OTEL_RESOURCE_ATTRIBUTES: service.name=foundation-servicename-service,service.version=1.0.0,deployment.environment=dev
 
       # JVM Configuration
       JAVA_OPTS: >-
@@ -156,7 +157,7 @@ services:
       rabbitmq-servicename:
         condition: service_healthy
     networks:
-      - servicename-network
+      - servicename-service-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health/readiness"]
       interval: 30s
@@ -186,7 +187,7 @@ services:
       - "127.0.0.1:9001:9000"
       - "127.0.0.1:9000:9000"
     networks:
-      - servicename-network
+      - servicename-service-network
     restart: unless-stopped
 
   # Prometheus for metrics collection
@@ -198,7 +199,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - servicename-network
+      - servicename-service-network
     restart: unless-stopped
 
   # Grafana for metrics visualization
@@ -214,15 +215,24 @@ services:
     depends_on:
       - prometheus
     networks:
-      - servicename-network
+      - servicename-service-network
     restart: unless-stopped
 
 networks:
-  servicename-network:
+  servicename-service-network:
     driver: bridge
-    name: foundation-servicename-network-dev
+    name: foundation-servicename-service-network-dev
     ipam:
       config:
+        # Pick a unique /16 block for each new service to avoid subnet conflicts.
+        # Assigned ranges across foundation services:
+        #   172.20.0.0/16  — reserved for this layout template / new services
+        #   172.21.0.0/16  — foundation-iam-service
+        #   172.22.0.0/16  — foundation-billing-service
+        #   172.23.0.0/16  — foundation-gateway-service
+        #   172.24.0.0/16  — foundation-cms-service
+        #   172.25.0.0/16  — foundation-audit-service
+        #   172.26.0.0/16  — next available
         - subnet: 172.20.0.0/16
 
 volumes:
@@ -236,8 +246,8 @@ volumes:
     name: iqkv_servicename_dbgate_data_dev
     driver: local
   servicename_logs:
-    name: servicename_logs_dev
+    name: iqkv_servicename_logs_dev
     driver: local
   servicename_tmp:
-    name: servicename_tmp_dev
+    name: iqkv_servicename_tmp_dev
     driver: local

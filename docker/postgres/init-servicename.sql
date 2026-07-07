@@ -1,4 +1,4 @@
--- Initialize Servicename Database
+-- Initialize Servicename Service Database
 -- This script runs when the PostgreSQL container starts for the first time
 
 -- Create additional schemas
@@ -25,4 +25,4 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-SELECT 'Servicename Database initialized successfully' AS status;
+SELECT 'Servicename Service Database initialized successfully' AS status;

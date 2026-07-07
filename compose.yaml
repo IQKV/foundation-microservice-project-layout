@@ -42,7 +42,7 @@ services:
       service: grafana
 
 networks:
-  servicename-network:
+  servicename-service-network:
     name: foundation-servicename-network-dev
     external: false
 
@@ -54,6 +54,6 @@ volumes:
   dbgate_servicename_data:
     name: iqkv_servicename_dbgate_data_dev
   servicename_logs:
-    name: servicename_logs_dev
+    name: iqkv_servicename_logs_dev
   servicename_tmp:
-    name: servicename_tmp_dev
+    name: iqkv_servicename_tmp_dev

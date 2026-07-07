@@ -15,8 +15,17 @@
  */
 
 /**
- * Spring Security filter chains, JWT filters, and security utility classes.
- * Must not depend on bounded-context adapter or application packages.
+ * Security-related infrastructure: servlet filters, JWT utilities, and claim name constants.
+ *
+ * <p>Key classes:
+ * <ul>
+ *   <li>{@link com.iqkv.foundation.servicename.infrastructure.security.CorrelationIdFilter} —
+ *       propagates / generates {@code X-Correlation-ID} and populates MDC.</li>
+ *   <li>{@link com.iqkv.foundation.servicename.infrastructure.security.JwtClaimNames} —
+ *       custom JWT claim name constants shared with the IAM service.</li>
+ * </ul>
+ *
+ * <p>This package must not contain business logic or domain model references.
  */
 
 package com.iqkv.foundation.servicename.infrastructure.security;

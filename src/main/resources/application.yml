@@ -70,24 +70,36 @@ iqkv:
     password: ${RABBITMQ_PASSWORD:svc_servicename_rmq}
   messaging:
     rabbitmq:
-      # Disabled by default; enabled per-profile (local, sit, uat, prd)
-      enabled: false
-  billing:
-    # Billing service base URL used by PlanCatalogCache for quota enforcement
-    service-url: ${BILLING_SERVICE_URI:http://foundation-billing-service}
-    # How often the plan catalog cache is refreshed (ISO-8601 duration)
-    plan-refresh-interval: ${BILLING_PLAN_REFRESH_INTERVAL:PT10M}
+      # Controlled via MESSAGING_ENABLED env var; defaults to false for local safety.
+      # Helm chart configmap sets this per environment (sit/uat/prd).
+      enabled: ${MESSAGING_ENABLED:false}
+  platform:
+    # Platform-wide operational mode: MULTI_TENANT (default) or SINGLE_TENANT.
+    # Must be the same value across all core services (IAM, Billing, CMS, etc.).
+    rollout-mode: ${ROLLOUT_MODE:MULTI_TENANT}
+  tenancy:
+    # Default tenant key for SINGLE_TENANT mode (optional).
+    # Format: 8-character NanoID using alphabet [a-z0-9], e.g. abc12345
+    default-tenant-key: ${DEFAULT_TENANT_KEY:platform}
+    # Display name for the default tenant in SINGLE_TENANT mode
+    default-tenant-name: ${DEFAULT_TENANT_NAME:Acme Corp.}
+    schema-prefix: t_
+    default-schema: public
+    provisioning-timeout: PT10M
   liquibase:
     tenant-runner-enabled: true
     system-change-log: db/changelog/system/db.changelog-system.xml
     tenant-change-log: db/changelog/tenant/db.changelog-tenant.xml
     demo-tenants: []
-    change-log: db/changelog/system/db.changelog-system.xml
-  platform:
-    # Platform-wide operational mode: MULTI_TENANT (default) or SINGLE_TENANT
-    rollout-mode: ${ROLLOUT_MODE:MULTI_TENANT}
+  billing:
+    # Billing service base URL used for quota / plan enforcement
+    service-url: ${BILLING_SERVICE_URI:http://foundation-billing-service}
+    # How often the plan catalog cache is refreshed (ISO-8601 duration)
+    plan-refresh-interval: ${BILLING_PLAN_REFRESH_INTERVAL:PT10M}
   auth:
     jwt:
+      # Path to the RSA public key PEM used to verify tokens from the IAM service.
+      # Use classpath: for local/test; use file: or a mounted secret in deployed envs.
       public-key-path: ${JWT_PUBLIC_KEY_PATH:classpath:keys/public.pem}
 
 git:

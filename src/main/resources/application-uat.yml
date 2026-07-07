@@ -24,6 +24,6 @@ iqkv:
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
-  messaging:
-    rabbitmq:
-      enabled: true
+  auth:
+    jwt:
+      public-key-path: ${JWT_PUBLIC_KEY_PATH}

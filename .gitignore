@@ -6,7 +6,8 @@ target/
 !**/src/test/**/target/
 package-lock.json
 pnpm-lock.yaml
-.kiro
+.kiro/
+!.kiro/helm/
 
 ### STS ###
 .apt_generated

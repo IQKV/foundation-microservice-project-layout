@@ -1,15 +1,12 @@
 # ===================================================================
 # Spring Boot configuration for the "prd" profile.
 # Overrides base: all secrets via env vars (no defaults), hardens
-# actuator/swagger, disables suffix pattern matching.
+# actuator/swagger.
 # ===================================================================
 
 spring:
   liquibase:
     contexts: "!demo"
-  mvc:
-    pathmatch:
-      use-suffix-pattern: false
 
 springdoc:
   api-docs:
@@ -34,6 +31,6 @@ iqkv:
     port: ${RABBITMQ_PORT}
     username: ${RABBITMQ_USERNAME}
     password: ${RABBITMQ_PASSWORD}
-  messaging:
-    rabbitmq:
-      enabled: true
+  auth:
+    jwt:
+      public-key-path: ${JWT_PUBLIC_KEY_PATH}
