@@ -17,26 +17,44 @@
 package com.iqkv.foundation.servicename.infrastructure.security;
 
 /**
- * Custom JWT claim names used by the IQKV platform.
+ * JWT claim name constants for this service.
  *
- * <p>These claims are set by the IAM service when issuing tokens and are read
- * by every resource server (this service, billing, CMS, etc.) to extract
- * tenant context and granted authorities.
+ * <p>Tokens are issued by {@code foundation-iam-service} using RSA-256. The full canonical
+ * claim set is defined there. Only declare the claims this service actually reads.
  *
- * <p>Must be kept in sync with the IAM service {@code JwtClaimNames} class.
+ * <p>The IAM access token carries these platform claims (snake_case throughout):
+ * <ul>
+ *   <li>{@code sub} — user email (standard claim)</li>
+ *   <li>{@code iss} — {@code "foundation-iam-service"} (standard claim)</li>
+ *   <li>{@code iat}, {@code exp}, {@code jti} — standard claims</li>
+ *   <li>{@code type} — {@code "access"} or {@code "refresh"}</li>
+ *   <li>{@code user_id} — UUID string</li>
+ *   <li>{@code email} — user email</li>
+ *   <li>{@code first_name}, {@code last_name}</li>
+ *   <li>{@code tenant_id} — 8-character NanoID; absent on platform-admin tokens</li>
+ *   <li>{@code authorities} — list of granted authority strings</li>
+ *   <li>{@code email_verified}, {@code onboarding_completed}, {@code profile_completed}</li>
+ *   <li>{@code plan_code} — optional; absent when no active subscription</li>
+ * </ul>
+ *
+ * <p>Most services only need {@code tenant_id} and {@code authorities} directly — the rest
+ * arrive via headers injected by the gateway ({@code X-User-ID}, {@code X-User-Email},
+ * {@code X-Tenant-ID}, {@code X-Plan-Code}, {@code X-User-Authorities}).
  */
 public final class JwtClaimNames {
 
   /**
-   * Claim carrying the tenant key (8-character NanoID).
-   * Absent or {@code null} on platform-admin tokens — those operate cross-tenant.
+   * Tenant key (8-character NanoID).
+   * Used by {@code TenantExtractionFilter} as the fallback source when the
+   * {@code X-Tenant-ID} header is absent.
+   * Absent on platform-admin tokens — those operate cross-tenant.
    */
   public static final String TENANT_ID = "tenant_id";
 
   /**
-   * Claim carrying the list of granted authority strings, e.g.
-   * {@code ["ROLE_USER", "TENANT_OWNER"]}. Mapped to Spring Security
-   * {@code GrantedAuthority} instances by the {@code JwtAuthenticationConverter}.
+   * Granted authority strings, e.g. {@code ["ROLE_USER", "TENANT_OWNER"]}.
+   * Mapped to Spring Security {@code GrantedAuthority} instances by the
+   * {@code JwtAuthenticationConverter}.
    */
   public static final String AUTHORITIES = "authorities";
 
