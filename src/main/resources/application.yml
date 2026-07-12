@@ -90,7 +90,6 @@ iqkv:
     tenant-runner-enabled: true
     system-change-log: db/changelog/system/db.changelog-system.xml
     tenant-change-log: db/changelog/tenant/db.changelog-tenant.xml
-    demo-tenants: []
   billing:
     # Billing service base URL used for quota / plan enforcement
     service-url: ${BILLING_SERVICE_URI:http://foundation-billing-service}
