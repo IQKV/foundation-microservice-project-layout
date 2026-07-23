@@ -96,6 +96,9 @@ public class SecurityConfig {
             .requestMatchers("/api-docs/**").permitAll()
             .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/swagger-ui.html").permitAll()
+            // Public endpoints — no authentication or tenant context required.
+            // TenantExtractionFilter skips these paths (see shouldNotFilter).
+            .requestMatchers("/api/v1/servicename/public/**").permitAll()
             // Platform-admin endpoints — cross-tenant oversight, PLATFORM_ADMIN only.
             // TenantExtractionFilter skips these paths (see shouldNotFilter).
             .requestMatchers("/api/v1/servicename/admin/**").hasAuthority("PLATFORM_ADMIN")

@@ -95,6 +95,9 @@ public class TenantExtractionFilter extends OncePerRequestFilter {
     return path.startsWith("/actuator/")
            || path.startsWith("/api-docs/")
            || path.startsWith("/swagger-ui/")
+           // Public endpoints — no tenant context is meaningful here.
+           // Update this prefix when renaming the service.
+           || path.startsWith("/api/v1/servicename/public/")
            // Platform-admin paths — cross-tenant by design, no tenant context ever required.
            // Update this prefix when renaming the service (e.g. /api/v1/reporting/admin/).
            || path.startsWith("/api/v1/servicename/admin/");

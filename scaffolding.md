@@ -94,17 +94,19 @@ Double-check:
 
 ### 6. Update `SecurityConfig`
 
-In `SecurityConfig.java`, change the admin path matcher to the actual API prefix:
+In `SecurityConfig.java`, change the admin path matcher to the actual API prefix, and update the public path matcher to match:
 
 ```java
+.requestMatchers("/api/v1/reporting/public/**").permitAll()
 .requestMatchers("/api/v1/reporting/admin/**").hasAuthority("PLATFORM_ADMIN")
 ```
 
 ### 7. Update `TenantExtractionFilter`
 
-In `TenantExtractionFilter.java`, update `shouldNotFilter`:
+In `TenantExtractionFilter.java`, update `shouldNotFilter` for both the public and admin prefixes:
 
 ```java
+|| path.startsWith("/api/v1/reporting/public/")
 || path.startsWith("/api/v1/reporting/admin/");
 ```
 
