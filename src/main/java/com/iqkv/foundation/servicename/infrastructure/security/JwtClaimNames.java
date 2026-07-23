@@ -52,6 +52,13 @@ public final class JwtClaimNames {
   public static final String TENANT_ID = "tenant_id";
 
   /**
+   * User UUID string.
+   * Identifies the authenticated user across all foundation services.
+   * Present on all access tokens, including platform-admin tokens.
+   */
+  public static final String USER_ID = "user_id";
+
+  /**
    * Granted authority strings, e.g. {@code ["ROLE_USER", "TENANT_OWNER"]}.
    * Mapped to Spring Security {@code GrantedAuthority} instances by the
    * {@code JwtAuthenticationConverter}.

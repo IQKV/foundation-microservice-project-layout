@@ -64,8 +64,8 @@ public final class PingDtos {
    * <p>Echoes the caller's user ID so an operator can confirm their JWT is being
    * decoded correctly and that their account carries the {@code PLATFORM_ADMIN} authority.
    *
-   * @param message  always {@code "pong"}
-   * @param actorId  the {@code user_id} claim extracted from the caller's JWT
+   * @param message   always {@code "pong"}
+   * @param actorId   the {@code user_id} claim extracted from the caller's JWT
    * @param timestamp server time at the moment the request was processed
    */
   public record AdminPongResponse(
