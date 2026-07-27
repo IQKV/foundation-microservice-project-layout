@@ -1,6 +1,6 @@
 # Foundation Microservice Project Layout 🚀
 
-GitHub template for bootstrapping Spring Boot microservices on the IQ Key Value platform. Provides a standardized single-module Maven layout with Docker Compose, multi-profile Spring configuration, and all quality tooling pre-wired.
+GitHub template for bootstrapping Spring Boot microservices on the iQ Key Value platform. Provides a standardized single-module Maven layout with Docker Compose, multi-profile Spring configuration, and all quality tooling pre-wired.
 
 ## About
 
