@@ -93,6 +93,7 @@ public class TenantExtractionFilter extends OncePerRequestFilter {
 
     // Infrastructure / docs — always skip
     return path.startsWith("/actuator/")
+           || path.equals("/api-docs")
            || path.startsWith("/api-docs/")
            || path.startsWith("/swagger-ui/")
            // Public endpoints — no tenant context is meaningful here.
