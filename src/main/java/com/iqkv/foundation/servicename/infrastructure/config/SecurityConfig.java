@@ -62,8 +62,8 @@ import org.springframework.security.web.SecurityFilterChain;
  * </ul>
  *
  * <p>When scaffolding a new service from this template, update the
- * {@code /api/v1/servicename/admin/**} path to match the actual API prefix and
- * add any additional public or role-gated endpoints as needed.
+ * {@code /api/v1/servicename/admin/**} path and the {@code /api/v1/servicename/ping}
+ * matcher to match the actual API prefix, and add any additional role-gated endpoints.
  */
 @Configuration
 @EnableWebSecurity
@@ -96,9 +96,9 @@ public class SecurityConfig {
             .requestMatchers("/api-docs/**").permitAll()
             .requestMatchers("/swagger-ui/**").permitAll()
             .requestMatchers("/swagger-ui.html").permitAll()
-            // Public endpoints — no authentication or tenant context required.
-            // TenantExtractionFilter skips these paths (see shouldNotFilter).
-            .requestMatchers("/api/v1/servicename/public/**").permitAll()
+            // Public ping — no authentication or tenant context required.
+            // TenantExtractionFilter skips this exact path (see shouldNotFilter).
+            .requestMatchers("/api/v1/servicename/ping").permitAll()
             // Platform-admin endpoints — cross-tenant oversight, PLATFORM_ADMIN only.
             // TenantExtractionFilter skips these paths (see shouldNotFilter).
             .requestMatchers("/api/v1/servicename/admin/**").hasAuthority("PLATFORM_ADMIN")

@@ -38,15 +38,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Exemplary REST resource demonstrating the three security tiers used by all foundation services.
+ * REST resource covering the three security tiers used by all foundation services.
  *
  * <h2>Endpoint overview</h2>
  * <ol>
- *   <li><b>Public ping</b> {@code GET /api/v1/servicename/public/ping} — no authentication, no tenant
+ *   <li><b>Public ping</b> {@code GET /api/v1/servicename/ping} — no authentication, no tenant
  *       context required. A lightweight reachability probe for infrastructure tooling and smoke tests.
  *       Returns a {@link PingDtos.PublicPongResponse}.</li>
- *   <li><b>Tenant-scoped ping</b> {@code GET /api/v1/servicename/ping} — requires a valid JWT and a
- *       resolved tenant context (via {@code X-Tenant-ID} header or JWT {@code tenant_id} claim).
+ *   <li><b>Tenant-scoped ping</b> {@code GET /api/v1/servicename/tenant/ping} — requires a valid JWT
+ *       and a resolved tenant context (via {@code X-Tenant-ID} header or JWT {@code tenant_id} claim).
  *       Echoes the resolved tenant key back so clients can verify tenant resolution.
  *       Returns a {@link PingDtos.TenantPongResponse}.</li>
  *   <li><b>Admin ping</b> {@code GET /api/v1/servicename/admin/ping} — requires {@code PLATFORM_ADMIN}
@@ -69,7 +69,8 @@ import org.springframework.web.bind.annotation.RestController;
  * </ul>
  *
  * <p>When scaffolding a new service, replace {@code servicename} with the actual service slug
- * in the {@code @RequestMapping} paths and delete (or keep and expand) this controller.
+ * in the {@code @RequestMapping} path and update the SecurityConfig and TenantExtractionFilter
+ * to match.
  */
 @RestController
 @RequestMapping("/api/v1/servicename")
@@ -78,10 +79,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class PingRestResource {
 
   // ── Public ping ──────────────────────────────────────────────────────────────
-  // No @SecurityRequirement — SecurityConfig permits this path without a token.
-  // TenantExtractionFilter is bypassed via the /public/ skip rule.
+  // No @SecurityRequirement — SecurityConfig permits this exact path without a token.
+  // TenantExtractionFilter skips /api/v1/servicename/ping (see shouldNotFilter).
 
-  @GetMapping("/public/ping")
+  @GetMapping("/ping")
   @Operation(
       summary = "Public ping",
       description = "Unauthenticated reachability probe. No JWT and no tenant header required. "
@@ -97,10 +98,8 @@ public class PingRestResource {
   // ── Tenant-scoped ping ────────────────────────────────────────────────────────
   // TenantExtractionFilter resolves the tenant from X-Tenant-ID or JWT tenant_id
   // and sets TenantContext before this method is reached.
-  // No @PreAuthorize needed: SecurityConfig already requires authentication for
-  // all paths not explicitly listed as permitAll.
 
-  @GetMapping("/ping")
+  @GetMapping("/tenant/ping")
   @SecurityRequirement(name = "bearerAuth")
   @Operation(
       summary = "Tenant ping",
