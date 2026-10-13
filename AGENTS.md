@@ -875,7 +875,7 @@ jobs:
         if: success()
         uses: codecov/codecov-action@v4
         with:
-          files: target/site/jacoco/jacoco.xml
+            files: target/site/jacoco/jacoco.xml
 ```
 
 ## 📚 Documentation Standards
