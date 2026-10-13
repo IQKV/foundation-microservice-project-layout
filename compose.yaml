@@ -43,7 +43,7 @@ services:
 
 networks:
   servicename-service-network:
-    name: foundation-servicename-network-dev
+    name: foundation-servicename-service-network-dev
     external: false
 
 volumes:

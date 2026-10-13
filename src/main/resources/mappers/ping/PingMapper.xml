@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+  Stub mapper file for the ping bounded context.
+
+  This file exists to demonstrate the correct mapper XML layout:
+    - namespace must match the fully-qualified @Mapper interface name
+    - column names use underscore_case; MyBatis maps them to camelCase automatically
+      (mybatis.configuration.map-underscore-to-camel-case=true)
+    - mapper XML files are discovered via mybatis.mapper-locations=classpath:mappers/**\/*.xml
+
+  When adding a real bounded context, create src/main/resources/mappers/<context>/<Entity>Mapper.xml
+  and set the namespace to com.iqkv.foundation.servicename.<context>.<Entity>Mapper.
+-->
+<mapper namespace="com.iqkv.foundation.servicename.ping.PingMapper">
+
+  <!--
+  Example resultMap and query — replace with real table/columns:
+
+  <resultMap id="ExampleResultMap" type="com.iqkv.foundation.servicename.example.Example">
+    <id property="id" column="id"/>
+    <result property="name" column="name"/>
+    <result property="createdAt" column="created_at"/>
+  </resultMap>
+
+  <select id="findById" resultMap="ExampleResultMap">
+    SELECT id, name, created_at
+    FROM examples
+    WHERE id = #{id}
+  </select>
+
+  <insert id="insert">
+    INSERT INTO examples (id, name, created_at)
+    VALUES (#{id}, #{name}, #{createdAt})
+  </insert>
+  -->
+
+</mapper>

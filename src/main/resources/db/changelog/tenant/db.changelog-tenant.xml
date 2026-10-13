@@ -5,5 +5,18 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.33.xsd">
 
+    <!--
+        Per-tenant schema migrations.
+
+        This changelog is intentionally empty in the template. Liquibase tracking tables
+        are initialised in the t_{tenantKey} schema when TenantLiquibaseRunner provisions
+        a new tenant at runtime.
+
+        Add <include> entries here (in timestamp order) when your service needs
+        per-tenant tables — e.g. tables that must be isolated per customer workspace.
+
+        System-level tables (shared across all tenants, in the public schema) belong in
+        db/changelog/system/db.changelog-system.xml instead.
+    -->
 
 </databaseChangeLog>

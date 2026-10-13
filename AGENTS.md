@@ -218,11 +218,13 @@ Before making recommendations, agents should understand the project's technology
 - Spring Boot 4.x
 - Maven for build management
 
-**Data & Caching**
+**Data & Persistence**
 
-- Database: PostgreSQL/MySQL/H2 (check project configuration)
-- Spring Data JPA with Hibernate
-- Redis for caching (if configured)
+- Database: PostgreSQL (production), H2 (test scope — smoke context-load only)
+- **MyBatis** with XML mappers — there is no Spring Data JPA / Hibernate in this project
+- `mybatis.configuration.map-underscore-to-camel-case=true` is enabled globally
+- Mapper interfaces annotated with `@Mapper`; XML mapper files in `src/main/resources/mappers/<context>/`
+- Liquibase for schema migrations, split into `system/` (public schema) and `tenant/` (per-tenant) changelogs
 
 **Security**
 
@@ -246,7 +248,7 @@ Before making recommendations, agents should understand the project's technology
 
 - Maven 3.9.0+
 - Docker (if Dockerfile present)
-- Environment profiles: local, staging, production
+- Environment profiles: `local`, `sit`, `uat`, `prd`
 
 ## 📋 Development Standards
 
@@ -510,29 +512,47 @@ public class UserController {
 
 **Unit Tests - AAA Pattern:**
 
+Use `@ExtendWith(MockitoExtension.class)`. Inject all dependencies via constructor — **do not use `@InjectMocks`**. Instantiate the class under test manually in `@BeforeEach`.
+
 ```java
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+class ExampleServiceImplTest {
 
   @Mock
-  private UserRepository userRepository;
+  private ExampleMapper exampleMapper;
 
-  @InjectMocks
-  private UserService userService;
+  private ExampleServiceImpl exampleService;
+
+  @BeforeEach
+  void setUp() {
+    exampleService = new ExampleServiceImpl(exampleMapper);
+  }
 
   @Test
-  @DisplayName("Should create user successfully")
-  void shouldCreateUser() {
+  @DisplayName("Should return example when found by ID")
+  void shouldReturnExampleWhenFoundById() {
     // Arrange
-    var command = new UserCreateCommand("john.doe", "john@example.com");
-    when(userRepository.save(any(User.class))).thenAnswer((i) -> i.getArgument(0));
+    final var id = UUID.randomUUID();
+    when(exampleMapper.findById(id)).thenReturn(Optional.of(buildExample(id)));
 
     // Act
-    var result = userService.createUser(command);
+    final var result = exampleService.findById(id);
 
     // Assert
-    assertThat(result.username()).isEqualTo("john.doe");
-    verify(userRepository).save(any(User.class));
+    assertThat(result.id()).isEqualTo(id);
+    verify(exampleMapper).findById(id);
+  }
+
+  @Test
+  @DisplayName("Should throw when example not found")
+  void shouldThrowWhenNotFound() {
+    // Arrange
+    final var id = UUID.randomUUID();
+    when(exampleMapper.findById(id)).thenReturn(Optional.empty());
+
+    // Act & Assert
+    assertThatThrownBy(() -> exampleService.findById(id))
+        .isInstanceOf(ResourceNotFoundException.class);
   }
 }
 ```
@@ -568,19 +588,13 @@ class UserServiceIntegrationTest {
 **Architecture Tests with ArchUnit:**
 
 ```java
-@AnalyzeClasses(packages = "com.example.project")
-class ArchitectureTest {
+@AnalyzeClasses(packagesOf = ServicenameApplication.class, importOptions = DoNotIncludeTests.class)
+class TechnicalStructureTest {
 
   @ArchTest
-  static final ArchRule servicesOnlyAccessedByControllersOrServices = classes()
-    .that()
-    .resideInAPackage("..service..")
-    .should()
-    .onlyBeAccessed()
-    .byAnyPackage("..controller..", "..service..", "..config..");
-
-  @ArchTest
-  static final ArchRule repositoriesShouldBeInterfaces = classes().that().resideInAPackage("..repository..").should().beInterfaces();
+  static final ArchRule respectsTechnicalArchitectureLayers = onionArchitecture()
+      .withOptionalLayers(true)
+      .ignoreDependency(belongToAnyOf(ServicenameApplication.class), alwaysTrue());
 }
 ```
 
@@ -858,9 +872,10 @@ jobs:
               run: mvn clean verify
 
             - name: Upload Coverage
-              uses: codecov/codecov-action@v3
-              with:
-                  files: target/site/jacoco/jacoco.xml
+        if: success()
+        uses: codecov/codecov-action@v4
+        with:
+          files: target/site/jacoco/jacoco.xml
 ```
 
 ## 📚 Documentation Standards
