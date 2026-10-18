@@ -1,0 +1,264 @@
+{
+    "groups": [
+        {
+            "name": "iqkv.db",
+            "description": "Intermediary database connection properties. Values are composed into spring.datasource by the base config; override per profile via DB_* environment variables."
+        },
+        {
+            "name": "iqkv.rabbitmq",
+            "description": "Intermediary RabbitMQ connection properties. Values are composed into spring.rabbitmq by the base config."
+        },
+        {
+            "name": "iqkv.messaging",
+            "description": "Messaging infrastructure configuration."
+        },
+        {
+            "name": "iqkv.messaging.rabbitmq",
+            "type": "com.iqkv.foundation.servicename.infrastructure.config.MessagingConfigurationProperties",
+            "sourceType": "com.iqkv.foundation.servicename.infrastructure.config.MessagingConfigurationProperties",
+            "description": "RabbitMQ messaging toggles. 'enabled' drives @ConditionalOnProperty in RabbitMQConfig and TenantProvisioningConsumer."
+        },
+        {
+            "name": "iqkv.platform",
+            "type": "com.iqkv.foundation.servicename.infrastructure.config.PlatformConfigurationProperties",
+            "sourceType": "com.iqkv.foundation.servicename.infrastructure.config.PlatformConfigurationProperties",
+            "description": "Platform-wide operational settings. Must be consistent across all core services (IAM, Billing, CMS, etc.) — they all read the same ROLLOUT_MODE environment variable."
+        },
+        {
+            "name": "iqkv.tenancy",
+            "description": "Tenancy settings shared by the platform. Declared here for consistency with the other services; tenant routing itself is handled by the foundation-tenancy library."
+        },
+        {
+            "name": "iqkv.liquibase",
+            "type": "com.iqkv.foundation.tenancy.LiquibaseConfigurationProperties",
+            "sourceType": "com.iqkv.foundation.tenancy.LiquibaseConfigurationProperties",
+            "description": "Tenant-aware Liquibase migration configuration consumed by the foundation-tenancy TenantLiquibaseRunner."
+        },
+        {
+            "name": "iqkv.billing",
+            "description": "Billing service integration consumed by the foundation-entitlement-plan-resolver-mvc PlanResolver for quota / plan enforcement."
+        },
+        {
+            "name": "iqkv.auth",
+            "type": "com.iqkv.foundation.servicename.infrastructure.config.AuthConfigurationProperties",
+            "sourceType": "com.iqkv.foundation.servicename.infrastructure.config.AuthConfigurationProperties",
+            "description": "Authentication and JWT configuration. This service is a JWT resource server — it verifies tokens issued by IAM and never issues its own."
+        },
+        {
+            "name": "iqkv.auth.jwt",
+            "type": "com.iqkv.foundation.servicename.infrastructure.config.AuthConfigurationProperties$Jwt",
+            "sourceType": "com.iqkv.foundation.servicename.infrastructure.config.AuthConfigurationProperties",
+            "description": "JWT token verification settings. Exactly one of jwks-uri or public-key-path must be non-blank — an IllegalStateException is thrown at startup if both or neither are set."
+        }
+    ],
+    "properties": [
+        {
+            "name": "iqkv.db.host",
+            "type": "java.lang.String",
+            "description": "Database server hostname.",
+            "defaultValue": "localhost"
+        },
+        {
+            "name": "iqkv.db.port",
+            "type": "java.lang.Integer",
+            "description": "Database server port.",
+            "defaultValue": 5432
+        },
+        {
+            "name": "iqkv.db.name",
+            "type": "java.lang.String",
+            "description": "Database name. Replace 'servicename' with the actual service name when instantiating the template.",
+            "defaultValue": "servicename"
+        },
+        {
+            "name": "iqkv.db.username",
+            "type": "java.lang.String",
+            "description": "Database username.",
+            "defaultValue": "svc_servicename_dba"
+        },
+        {
+            "name": "iqkv.db.password",
+            "type": "java.lang.String",
+            "description": "Database password.",
+            "defaultValue": "svc_servicename_dba"
+        },
+        {
+            "name": "iqkv.rabbitmq.host",
+            "type": "java.lang.String",
+            "description": "RabbitMQ broker hostname.",
+            "defaultValue": "localhost"
+        },
+        {
+            "name": "iqkv.rabbitmq.port",
+            "type": "java.lang.Integer",
+            "description": "RabbitMQ broker AMQP port.",
+            "defaultValue": 5672
+        },
+        {
+            "name": "iqkv.rabbitmq.username",
+            "type": "java.lang.String",
+            "description": "RabbitMQ username.",
+            "defaultValue": "svc_servicename_rmq"
+        },
+        {
+            "name": "iqkv.rabbitmq.password",
+            "type": "java.lang.String",
+            "description": "RabbitMQ password.",
+            "defaultValue": "svc_servicename_rmq"
+        },
+        {
+            "name": "iqkv.messaging.rabbitmq.enabled",
+            "type": "java.lang.Boolean",
+            "description": "Enables RabbitMQ messaging (MESSAGING_ENABLED env var). When false, RabbitMQConfig and TenantProvisioningConsumer are skipped. Defaults to false for local safety; the Helm chart configmap sets it per environment and the local profile enables it.",
+            "defaultValue": false
+        },
+        {
+            "name": "iqkv.platform.rollout-mode",
+            "type": "com.iqkv.foundation.servicename.infrastructure.config.RolloutMode",
+            "description": "Platform-wide operational mode (ROLLOUT_MODE env var). Must be the same value across all core services. MULTI_TENANT: each signup creates a new tenant. SINGLE_TENANT: all users join a single pre-provisioned tenant.",
+            "defaultValue": "MULTI_TENANT"
+        },
+        {
+            "name": "iqkv.tenancy.default-tenant-key",
+            "type": "java.lang.String",
+            "description": "Default tenant key for SINGLE_TENANT mode. Format: 8 characters using alphabet [a-z0-9], e.g. abc12345. Must match the IAM service.",
+            "defaultValue": "platform"
+        },
+        {
+            "name": "iqkv.tenancy.default-tenant-name",
+            "type": "java.lang.String",
+            "description": "Display name for the default tenant in SINGLE_TENANT mode (DEFAULT_TENANT_NAME env var).",
+            "defaultValue": "Acme Corp."
+        },
+        {
+            "name": "iqkv.tenancy.schema-prefix",
+            "type": "java.lang.String",
+            "description": "PostgreSQL schema name prefix for tenant schemas.",
+            "defaultValue": "t_"
+        },
+        {
+            "name": "iqkv.tenancy.default-schema",
+            "type": "java.lang.String",
+            "description": "Default (system) schema name.",
+            "defaultValue": "public"
+        },
+        {
+            "name": "iqkv.tenancy.provisioning-timeout",
+            "type": "java.time.Duration",
+            "description": "Maximum time allowed for tenant schema provisioning.",
+            "defaultValue": "PT10M"
+        },
+        {
+            "name": "iqkv.liquibase.tenant-runner-enabled",
+            "type": "java.lang.Boolean",
+            "description": "Registers the foundation-tenancy TenantLiquibaseRunner so pending changesets are applied to every tenant schema on startup. Read via @ConditionalOnProperty in TenancyAutoConfiguration; not a field of LiquibaseConfigurationProperties.",
+            "defaultValue": true
+        },
+        {
+            "name": "iqkv.liquibase.system-change-log",
+            "type": "java.lang.String",
+            "description": "Classpath location of the system (public schema) Liquibase changelog.",
+            "defaultValue": "db/changelog/system/db.changelog-system.xml"
+        },
+        {
+            "name": "iqkv.liquibase.tenant-change-log",
+            "type": "java.lang.String",
+            "description": "Classpath location of the per-tenant schema Liquibase changelog.",
+            "defaultValue": "db/changelog/tenant/db.changelog-tenant.xml"
+        },
+        {
+            "name": "iqkv.liquibase.contexts",
+            "type": "java.lang.String",
+            "description": "Active Liquibase contexts. Set to 'demo' on non-production profiles to apply demo seed changelogs; omit for schema-only. Not set in the base config."
+        },
+        {
+            "name": "iqkv.liquibase.bootstrap-tenants",
+            "type": "java.util.List<java.lang.String>",
+            "description": "Tenant keys whose schemas are migrated during bootstrap, in addition to the system schema. Not set in the base config."
+        },
+        {
+            "name": "iqkv.liquibase.upgrade-existing-tenants",
+            "type": "java.lang.Boolean",
+            "description": "Whether the TenantLiquibaseRunner scans and upgrades already-provisioned tenant schemas on startup. Set to false when migrations are managed out-of-band or before any tenant schemas exist.",
+            "defaultValue": true
+        },
+        {
+            "name": "iqkv.billing.service-url",
+            "type": "java.lang.String",
+            "description": "Base URL of the billing service used for quota / plan enforcement (BILLING_SERVICE_URI env var). Consumed by the entitlement PlanResolver.",
+            "defaultValue": "http://foundation-billing-service"
+        },
+        {
+            "name": "iqkv.billing.plan-refresh-interval",
+            "type": "java.lang.String",
+            "description": "How often the plan catalog cache is refreshed, as an ISO-8601 duration string (BILLING_PLAN_REFRESH_INTERVAL env var).",
+            "defaultValue": "PT10M"
+        },
+        {
+            "name": "iqkv.auth.jwt.jwks-uri",
+            "type": "java.lang.String",
+            "description": "JWKS URI of the IAM service (JWT_JWKS_URI env var). Preferred for deployed (K8s) environments — keys are fetched and cached, and rotation is picked up without redeployment. Mutually exclusive with public-key-path. Example: http://foundation-iam-service/.well-known/jwks.json",
+            "defaultValue": ""
+        },
+        {
+            "name": "iqkv.auth.jwt.public-key-path",
+            "type": "java.lang.String",
+            "description": "Path to the RSA public key PEM used to verify IAM-issued tokens (JWT_PUBLIC_KEY_PATH env var). Accepts classpath: (tests) or file: (deployed) resources. Ignored when jwks-uri is set.",
+            "defaultValue": "classpath:keys/public.pem"
+        }
+    ],
+    "hints": [
+        {
+            "name": "iqkv.platform.rollout-mode",
+            "values": [
+                {
+                    "value": "MULTI_TENANT",
+                    "description": "Multi-tenant mode: each signup creates a new tenant."
+                },
+                {
+                    "value": "SINGLE_TENANT",
+                    "description": "Single-tenant mode: all users join a single pre-provisioned tenant."
+                }
+            ]
+        },
+        {
+            "name": "iqkv.messaging.rabbitmq.enabled",
+            "values": [
+                {
+                    "value": true,
+                    "description": "Enable RabbitMQ — used by the local, sit, uat and prd profiles."
+                },
+                {
+                    "value": false,
+                    "description": "Disable RabbitMQ — base config default for local safety."
+                }
+            ]
+        },
+        {
+            "name": "iqkv.auth.jwt.jwks-uri",
+            "values": [
+                {
+                    "value": "http://foundation-iam-service/.well-known/jwks.json",
+                    "description": "In-cluster IAM JWKS endpoint (deployed environments)."
+                },
+                {
+                    "value": "",
+                    "description": "Blank — fall back to iqkv.auth.jwt.public-key-path (local dev / tests)."
+                }
+            ]
+        },
+        {
+            "name": "iqkv.auth.jwt.public-key-path",
+            "values": [
+                {
+                    "value": "classpath:keys/public.pem",
+                    "description": "Bundled dev key (not for production)."
+                },
+                {
+                    "value": "file:/run/secrets/public.pem",
+                    "description": "Docker / K8s secret mount path."
+                }
+            ]
+        }
+    ]
+}
