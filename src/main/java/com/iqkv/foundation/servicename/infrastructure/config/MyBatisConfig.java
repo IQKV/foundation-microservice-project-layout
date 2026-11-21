@@ -19,6 +19,7 @@ package com.iqkv.foundation.servicename.infrastructure.config;
 import java.util.UUID;
 import javax.sql.DataSource;
 
+import com.iqkv.foundation.mybatis.util.StringArrayTypeHandler;
 import com.iqkv.foundation.servicename.infrastructure.mybatis.UuidTypeHandler;
 import com.iqkv.foundation.tenancy.MyBatisSchemaInterceptor;
 import org.apache.ibatis.annotations.Mapper;
@@ -59,6 +60,7 @@ public class MyBatisConfig {
     config.setMapUnderscoreToCamelCase(true);
     config.addInterceptor(new MyBatisSchemaInterceptor());
     config.getTypeHandlerRegistry().register(UUID.class, UuidTypeHandler.class);
+    config.getTypeHandlerRegistry().register(java.util.List.class, StringArrayTypeHandler.class);
     factory.setConfiguration(config);
 
     return factory.getObject();
